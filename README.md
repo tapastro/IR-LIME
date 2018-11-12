@@ -17,4 +17,5 @@ Second, if interested in generating new grid input files for IR-LIME, you may wa
 ## Installation of IR-LIME
 IR-LIME exists now as a slight modification of base LIME 1.43 - this means that installation involves replacing base LIME source files with those provided here. I would suggest you test the LIME installation with its provided example model, then archive the replaced LIME files when replacing them with IR-LIME. Then, the example provided here can be tested.
 
-
+### Notes
+I ran into an issue during LIME installation - the Makefile assumes your C compiler is gcc and that it is compatible with the -fopenmp flag. 
