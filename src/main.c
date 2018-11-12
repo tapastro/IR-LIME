@@ -21,7 +21,6 @@
  */
 
 #include "lime.h"
-/*Added header for radlite input */
 #include "radlite.h"
 
 int main () {
@@ -148,7 +147,6 @@ double bilinInterpVal(double x1, double y1, double z1, int col) {
     }
     return val;
 }
-/* Added by TAP - functions for reading in RADMC grid */
 
 void gridread(double*** array, int *glen, double** tvec, double** rvec) {
 
@@ -162,21 +160,20 @@ void gridread(double*** array, int *glen, double** tvec, double** rvec) {
     tv = malloc(tlen*sizeof(double));
     rv = malloc(rlen*sizeof(double));
 
-    fpr=fopen("radiuscopy_sr21.dat","r");
+    fpr=fopen("radius.dat","r");
     for(i=0;i<rlen;i++){
       fscanf(fpr,"%lf\n", &rv[i]);
     }
     fclose(fpr);
 
-    fpt=fopen("thetacopy_sr21.dat","r");
+    fpt=fopen("theta.dat","r");
     for(j=0;j<tlen;j++){
       fscanf(fpt,"%lf\n", &tv[j]);
     }
     fclose(fpt);
 
 /*  MAKE THIS PART MORE SMOOTH - RIGHT NOW, ENTER GRID FILE HERE */
-    //fp=fopen("radlite_griddata_posval.dat", "r");
-    fp=fopen("radlite_gridcopy_sr21.dat", "r");
+    fp=fopen("radlite_griddata_posval.dat", "r");
     while(fgets(string,280,fp) != NULL){
       gridlen++;
     }
