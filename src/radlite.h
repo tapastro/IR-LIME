@@ -11,7 +11,7 @@
 #define ABNCOL 4
 #define TEMCOL 5
 #define DTEMCOL 6
-#define TURBCOL 7
+#define DOPCOL 7
 #define HCOL 11
 #define H2COL 12
 

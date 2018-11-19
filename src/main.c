@@ -21,6 +21,7 @@
  */
 
 #include "lime.h"
+/*Added header for radlite input */
 #include "radlite.h"
 
 int main () {
@@ -70,13 +71,13 @@ double bilinInterpVal(double x1, double y1, double z1, int col) {
     t1 = atan(r1/pz);
     if(t1>PI/2.) t1 = PI - t1;
  
-    for (int i = rlen;i>-1;i--){
+    for (int i = RLEN;i>-1;i--){
       if(radvec[i]>r1) rind=i; /*rind set to index of first rvec bigger than r1*/
     }
     if(rind<0) {
       //r1 is larger than all values in rvec
       rmax = 1;
-      rind = rlen-1;
+      rind = RLEN-1;
       wr1 = 1.;
       wr2 = 0.;
     }
@@ -93,13 +94,13 @@ double bilinInterpVal(double x1, double y1, double z1, int col) {
       wr2 = d1/(d1+d2);
     }
 
-    for (int j = tlen;j>-1;j--){
+    for (int j = TLEN;j>-1;j--){
       if(thtvec[j]>t1) tind=j; /*tind set to index of first tvec bigger than t1*/
     }
     if(tind<0) {
       //t1 is larger than all values in tvec
       tmax = 1;
-      tind = tlen-1;
+      tind = TLEN-1;
       wt1 = 1.;
       wt2 = 0.;
     }
@@ -118,22 +119,22 @@ double bilinInterpVal(double x1, double y1, double z1, int col) {
 
     if((rind==0)||(rmax==1)) {
       if((tind==0)||(tmax==1)) {
-        val = ingridarray[col][tind+(rind*tlen)];
+        val = ingridarray[col][tind+(rind*TLEN)];
       }
       else {
-        tmp1 = wt1 * ingridarray[col][tind-1+(rind*tlen)];
-        tmp2 = wt2 * ingridarray[col][tind+(rind*tlen)];
+        tmp1 = wt1 * ingridarray[col][tind-1+(rind*TLEN)];
+        tmp2 = wt2 * ingridarray[col][tind+(rind*TLEN)];
         val = tmp1 + tmp2;
       }
     }
     else if((tind==0)||(tmax==1)) {
-      tmp1 = wr1 * ingridarray[col][tind+((rind-1)*tlen)];
-      tmp2 = wr2 * ingridarray[col][tind+(rind*tlen)];
+      tmp1 = wr1 * ingridarray[col][tind+((rind-1)*TLEN)];
+      tmp2 = wr2 * ingridarray[col][tind+(rind*TLEN)];
       val = tmp1 + tmp2;
     }
     else {
-      tmp1 = wr1 * ingridarray[col][tind-1+((rind-1)*tlen)] + wr2 * ingridarray[col][tind-1+(rind*tlen)];
-      tmp2 = wr1 * ingridarray[col][tind+((rind-1)*tlen)] + wr2 * ingridarray[col][tind+(rind*tlen)];
+      tmp1 = wr1 * ingridarray[col][tind-1+((rind-1)*TLEN)] + wr2 * ingridarray[col][tind-1+(rind*TLEN)];
+      tmp2 = wr1 * ingridarray[col][tind+((rind-1)*TLEN)] + wr2 * ingridarray[col][tind+(rind*TLEN)];
       val = wt1 * tmp1 + wt2 * tmp2;
     } 
     if(val<0) {
@@ -147,39 +148,43 @@ double bilinInterpVal(double x1, double y1, double z1, int col) {
     }
     return val;
 }
+/* Added by TAP - functions for reading in RADMC grid */
 
 void gridread(double*** array, int *glen, double** tvec, double** rvec) {
 
     FILE *fp,*fpr,*fpt;
-    int i,j,k,gridlen=0, vars=13;
+    int i,j,k,gridlen=0;
     char string[280];
     double** arr;
     double* tv;
     double *rv;
 
-    tv = malloc(tlen*sizeof(double));
-    rv = malloc(rlen*sizeof(double));
+    tv = malloc(TLEN*sizeof(double));
+    rv = malloc(RLEN*sizeof(double));
 
-    fpr=fopen("radius.dat","r");
-    for(i=0;i<rlen;i++){
+    //fpr=fopen("radiuscopy_sr21.dat","r");
+    fpr=fopen(RADFILE,"r");
+    for(i=0;i<RLEN;i++){
       fscanf(fpr,"%lf\n", &rv[i]);
     }
     fclose(fpr);
 
-    fpt=fopen("theta.dat","r");
-    for(j=0;j<tlen;j++){
+    //fpt=fopen("thetacopy_sr21.dat","r");
+    fpt=fopen(THTFILE,"r");
+    for(j=0;j<TLEN;j++){
       fscanf(fpt,"%lf\n", &tv[j]);
     }
     fclose(fpt);
 
 /*  MAKE THIS PART MORE SMOOTH - RIGHT NOW, ENTER GRID FILE HERE */
-    fp=fopen("radlite_griddata_posval.dat", "r");
+    fp=fopen(GRIDFILE, "r");
+    
     while(fgets(string,280,fp) != NULL){
       gridlen++;
     }
     rewind(fp);
 
-    arr = make2DDoubleArray(vars, gridlen);
+    arr = make2DDoubleArray(NCOL, gridlen);
 
     for(k=0;k<gridlen;k++){
       fscanf(fp,"%lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf  %lf\n", &arr[0][k], &arr[1][k], &arr[2][k], &arr[3][k], &arr[4][k], &arr[5][k], &arr[6][k], &arr[7][k], &arr[8][k], &arr[9][k], &arr[10][k], &arr[11][k], &arr[12][k]);

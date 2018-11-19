@@ -78,15 +78,11 @@ input(inputPars *par, image *img){
 void
 density(double x, double y, double z, double *density){
     double tmp, den, h, h2;
-    int dencol, hcol, h2col;
 
-    dencol = 3;
-    hcol = 11;
-    h2col = 12;
-    den = 1.e3/AMU*bilinInterpVal(x,y,z,dencol);
+    den = 1.e3/AMU*bilinInterpVal(x,y,z,DENCOL);
 
-    h = 2.*bilinInterpVal(x,y,z,hcol);
-    h2 = 2.*bilinInterpVal(x,y,z,h2col);
+    h = 2.*bilinInterpVal(x,y,z,HCOL);
+    h2 = 2.*bilinInterpVal(x,y,z,H2COL);
 
     /* Density profiles for H2 and electrons - very rough distribution */
     density[0] = 0.25*den*h2;
@@ -99,15 +95,12 @@ density(double x, double y, double z, double *density){
 
 void
 temperature(double x, double y, double z, double *temperature){
-    int temcol, dtemcol;
     double temratio, tem,dtem;
-    temcol=5;
-    dtemcol=6;
     temratio = 0.75;
-    tem = bilinInterpVal(x,y,z,temcol);
-    dtem = bilinInterpVal(x,y,z,dtemcol);
+    tem = bilinInterpVal(x,y,z,TEMCOL);
+    dtem = bilinInterpVal(x,y,z,DTEMCOL);
     temperature[0]=((temratio*tem)+((1.-temratio)*dtem));
-    temperature[1]=bilinInterpVal(x,y,z,dtemcol);
+    temperature[1]=bilinInterpVal(x,y,z,DTEMCOL);
     //temperature[0]=ingridarray[5][nearestGridPt(x,y,z)];
     //temperature[1]=ingridarray[6][nearestGridPt(x,y,z)];
 }
@@ -120,8 +113,7 @@ abundance(double x, double y, double z, double *abundance){
    * Here we use a constant abundance. Could be a
    * function of (x,y,z).
    */
-    int abncol = 4;
-    abundance[0] = 1.*bilinInterpVal(x,y,z,abncol);
+    abundance[0] = 1.*bilinInterpVal(x,y,z,ABNCOL);
 }
 
 /******************************************************************************/
@@ -134,8 +126,7 @@ doppler(double x, double y, double z, double *doppler){
    * Note that *doppler is a pointer, not an array.
    * Remember the * in front of doppler.
    */
-  int dopcol = 7;
-  *doppler = bilinInterpVal(x,y,z,dopcol);
+  *doppler = bilinInterpVal(x,y,z,DOPCOL);
 }
 
 /******************************************************************************/
