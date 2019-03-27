@@ -31,6 +31,7 @@ int main () {
   molData	  *m;
   inputPars	  par;
   struct grid *g;
+  FILE *fp;
   image		  *img;
   if(!silent) greetings();
   if(!silent) screenInfo();
@@ -38,11 +39,23 @@ int main () {
   /*Added by TAP to read radlite grid */
   gridread(&ingridarray,&gridlength,&thtvec,&radvec);
   parseInput(&par,&img,&m);
+
+  //Testing exclusion of gridAlloc if restart active
+  //if(!(par.restart)) gridAlloc(&par,&g);
   gridAlloc(&par,&g);
 
   if(par.pregrid) predefinedGrid(&par,g);
   else if(par.restart) popsin(&par,&g,&m,&popsdone);
   else buildGrid(&par,g);
+  
+  /*
+  fp = fopen("log_popsin.txt","a");
+  fprintf(fp,"Test print from main\n");
+  fprintf(fp,"num points equals %d",par.pIntensity);
+  fprintf(fp,"sink points equals %d",par.sinkPoints);
+  fclose(fp);
+  */
+
   for(i = 0;i < par.nImages; i++){
     if(img[i].doline == 1 && popsdone == 0) {
       levelPops(m,&par,g,&popsdone);
@@ -63,6 +76,9 @@ double bilinInterpVal(double x1, double y1, double z1, int col) {
     double wr1, wr2, wt1, wt2; 
     double d1, d2, val, tmp1, tmp2;
     int rind=-1,tind=-1,rmax=0,tmax=0;
+    int RLEN=0,TLEN=0;
+
+    gridsize(&RLEN,&TLEN);
 
     //Assume +/- z symmetry    
     pz = fabs(z1);
@@ -158,26 +174,34 @@ void gridread(double*** array, int *glen, double** tvec, double** rvec) {
     double** arr;
     double* tv;
     double *rv;
+    char rname[200],tname[200],gname[200];
+    int RLEN=0,TLEN=0;
+
+    gridsize(&RLEN,&TLEN);
 
     tv = malloc(TLEN*sizeof(double));
     rv = malloc(RLEN*sizeof(double));
 
+    filenames(rname,tname,gname);
+    printf("TEST PRINT\n");
+    printf("%s",rname);
+
     //fpr=fopen("radiuscopy_sr21.dat","r");
-    fpr=fopen(RADFILE,"r");
+    fpr=fopen(rname,"r");
     for(i=0;i<RLEN;i++){
       fscanf(fpr,"%lf\n", &rv[i]);
     }
     fclose(fpr);
 
     //fpt=fopen("thetacopy_sr21.dat","r");
-    fpt=fopen(THTFILE,"r");
+    fpt=fopen(tname,"r");
     for(j=0;j<TLEN;j++){
       fscanf(fpt,"%lf\n", &tv[j]);
     }
     fclose(fpt);
 
 /*  MAKE THIS PART MORE SMOOTH - RIGHT NOW, ENTER GRID FILE HERE */
-    fp=fopen(GRIDFILE, "r");
+    fp=fopen(gname, "r");
     
     while(fgets(string,280,fp) != NULL){
       gridlen++;

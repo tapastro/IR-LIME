@@ -15,7 +15,7 @@
 
 void
 kappa(molData *m, struct grid *g, inputPars *par, int s){
-  FILE *fp;
+  FILE *fp;//,*fpdd;
   char string[80];
   int i=0,k,j,iline,id,n;
   double loglam, *lamtab, *kaptab, *kappatab, gtd, densum;
@@ -66,7 +66,19 @@ kappa(molData *m, struct grid *g, inputPars *par, int s){
       free(lamtab);
     }
   }
-
+  /*fpdd=fopen("cell_dustdens.dat","a");
+  for(id=0;id<par->ncell;id++){
+    gasIIdust(g[id].x[0],g[id].x[1],g[id].x[2],&gtd);
+    densum = 0.;
+    for(n=0;n<par->collPart;n++) {
+      densum += g[id].dens[n];
+    }
+    dustdens(densum,gtd,g[id].dd);
+    //g[id].dd = densum/gtd;
+    fprintf(fpdd,"%e \n",g[id].dd[0]);
+  }
+  fclose(fpdd);
+  */
   for(iline=0;iline<m[s].nline;iline++){
     for(id=0;id<par->ncell;id++){
       gasIIdust(g[id].x[0],g[id].x[1],g[id].x[2],&gtd);
@@ -79,7 +91,9 @@ kappa(molData *m, struct grid *g, inputPars *par, int s){
       for(n=0;n<par->collPart;n++) {
         densum += g[id].dens[n];
       }
-
+      //dustdens(densum,gtd,g[id].dd);
+      //g[id].dd = densum/gtd;
+      //printf("%f\n",g[id].dd[0]);
       g[id].mol[s].knu[iline]=kappatab[iline]*2.4*AMU/gtd*densum;
       
       //Check if input model supplies a dust temperature. Otherwise use the kinetic temperature
@@ -214,8 +228,8 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
         // HOTFIX - ASSIGN SIZE TO KNOWN ATOMIC HYDROGEN LENGTH = 1722
         //m[i].lcl = malloc(sizeof(int)*m[i].ntrans[ipart]);
         //m[i].lcu = malloc(sizeof(int)*m[i].ntrans[ipart]);
-        m[i].lcl = malloc(sizeof(int)*1722);
-        m[i].lcu = malloc(sizeof(int)*1722);
+        m[i].lcl = malloc(sizeof(int)*4080);
+        m[i].lcu = malloc(sizeof(int)*4080);
       }
       for(itemp=0;itemp<ntemp[ipart];itemp++){
         fscanf(fp, "%lf", &part[ipart].temp[itemp]);

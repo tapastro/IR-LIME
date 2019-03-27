@@ -1,10 +1,12 @@
-#define RLEN 131
-#define RADFILE "radius.dat"
+//#define RLEN 131
+//#define RLEN 131
+//#define RADFILE "radius.dat"
 
-#define TLEN 80
-#define THTFILE "theta.dat"
+//#define TLEN 60
+//#define TLEN 80
+//#define THTFILE "theta.dat"
 
-#define GRIDFILE "radlite_griddata_posval.dat"
+//#define GRIDFILE "radlite_griddata_posval.dat"
 #define NCOL 13
 
 #define DENCOL 3
@@ -22,4 +24,7 @@ int gridlength;
 double** ingridarray;
 double* thtvec;
 double* radvec;
-
+void filenames(char* rname, char* tname, char* gname);
+void gridsize(int* RLEN,int* TLEN);
+void maxdens(double* mdens);
+void minscale(double* minr);

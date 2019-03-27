@@ -222,11 +222,12 @@ tracerays(int px, data *ray, int tmptrans, int im, inputPars *par, struct grid *
 void
 raytrace(int im, inputPars *par, struct grid *g, molData *m, image *img){
   int *counta, *countb,nlinetot;
-  int ichan,i,px,iline,tmptrans,count;
+  int ichan,i,j,px,iline,tmptrans,count;
   double size,xp,yp,minfreq;
   const gsl_rng *ran = gsl_rng_alloc(gsl_rng_ranlxs2);	/* Random number generator */
   gsl_rng_set(ran,time(0));
   data *ray;
+  FILE *fp;
 
   int sg,n;
   double cx,cy;
@@ -283,6 +284,19 @@ raytrace(int im, inputPars *par, struct grid *g, molData *m, image *img){
     }
   }
 
+  /*
+  fp = fopen("log_ptarray.txt","w");
+  fprintf(fp,"number of points is %d\n",par->pIntensity);
+  for(i=0;i<par->pIntensity;i++){
+    fprintf(fp,"id = %d \n",i);
+    fprintf(fp,"  x = %e \n",ray[i].x);
+    fprintf(fp,"  y = %e \n",ray[i].y);
+    fprintf(fp,"  intensity = %e \n",ray[i].intensity);
+    fprintf(fp,"  tau = %e \n",ray[i].tau);
+  }
+
+  fclose(fp);
+  */
 
   /* Smooth out the distribution of rays */
   for(sg=0;sg<20;sg++){
@@ -293,6 +307,8 @@ raytrace(int im, inputPars *par, struct grid *g, molData *m, image *img){
       pt_array[i*2+1]=ray[i].y;
     }
 
+
+    //printf("\n FLAGS: %s \n \n",flags);
     sprintf(flags,"qhull v s Qbb T0");
     if (!qh_new_qhull(2, par->pIntensity, pt_array, ismalloc, flags, NULL, NULL)) {
 

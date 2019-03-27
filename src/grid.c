@@ -17,12 +17,18 @@
 #include <libqhull/qhull_a.h>
 #endif
 #include "lime.h"
-
+#include "radlite.h"
 
 void
 gridAlloc(inputPars *par, struct grid **g){
   int i;
   double temp[99];
+  FILE *fp;
+  
+  //fp = fopen("log_popsin.txt","a");
+  //fprintf(fp,"pIntensity equals %d \n",par->pIntensity);
+  //fprintf(fp,"sinkPoints equals %d \n",par->sinkPoints);
+  //fclose(fp);
 
   *g=malloc(sizeof(struct grid)*(par->pIntensity+par->sinkPoints));
   memset(*g, 0., sizeof(struct grid) * (par->pIntensity+par->sinkPoints));
@@ -38,6 +44,8 @@ gridAlloc(inputPars *par, struct grid **g){
 
   for(i=0;i<(par->pIntensity+par->sinkPoints); i++){
     (*g)[i].dens=malloc(sizeof(double)*par->collPart);
+    //Added by TAP to test dustdens
+    //(*g)[i].dd=malloc(sizeof(double)*par->collPart);
     (*g)[i].abun=malloc(sizeof(double)*par->nSpecies);
     (*g)[i].nmol=malloc(sizeof(double)*par->nSpecies);
     (*g)[i].t[0]=-1;
@@ -199,9 +207,11 @@ write_VTK_unstructured_Points(inputPars *par, struct grid *g){
   for(i=0;i<par->ncell;i++){
     fprintf(fp, "%e\n", g[i].dens[0]);
   }
+  //fprintf(fp,"SCALARS Dust_density float 1\n");
   fprintf(fp,"SCALARS Mol_abundance float 1\n");
   fprintf(fp,"LOOKUP_TABLE default\n");
   for(i=0;i<par->ncell;i++){
+    //fprintf(fp, "%e\n", g[i].dd[0]);
     fprintf(fp, "%e\n", g[i].abun[0]);
   }
   fprintf(fp,"SCALARS Gas_temperature float 1\n");
@@ -403,6 +413,7 @@ buildGrid(inputPars *par, struct grid *g){
   double logmin;	    /* Logarithm of par->minScale				*/
   double r,theta,phi,x,y,z;	/* Coordinates								*/
   double temp,*abun;
+  double sign,signrnd;
   int k=0,i;            /* counters									*/
   int flag;
 
@@ -423,7 +434,14 @@ buildGrid(inputPars *par, struct grid *g){
       if(par->sampling==0){
         r=pow(10,logmin+gsl_rng_uniform(ran)*(lograd-logmin));
         theta=2.*PI*gsl_rng_uniform(ran);
+        
         phi=PI*gsl_rng_uniform(ran);
+        //Old Phi assignment above, weighting to disc midplane now
+        //signrnd=gsl_rng_uniform(ran);
+        //if(signrnd<0.5) sign=-1.0;
+        //else sign=1.0;
+        //phi=PI/2.0*pow(gsl_rng_uniform(ran),2.0)*sign;
+        
         x=r*cos(theta)*sin(phi);
         y=r*sin(theta)*sin(phi);
         if(DIM==3) z=r*cos(phi);
