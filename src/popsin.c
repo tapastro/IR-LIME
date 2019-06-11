@@ -16,8 +16,8 @@
 
 void
 popsin(inputPars *par, struct grid **g, molData **m, int *popsdone){
-  FILE *fp,*fp2;
-  int i,j,k,pcount=0,sinkcount=0;
+  FILE *fp;
+  int i,j,k;
   char c;
   double dummy;
 
@@ -33,10 +33,6 @@ popsin(inputPars *par, struct grid **g, molData **m, int *popsdone){
   free(*m);
   *m=malloc(sizeof(molData)*par->nSpecies);
 
-  fp2 = fopen("log_popsin.txt","a");
-  fprintf(fp2,"The number of grid points is %d \n",par->ncell);
-  fclose(fp2); 
- 
 
   for(i=0;i<par->nSpecies;i++){
     fread(&(*m)[i].nlev,  sizeof(int),        1,fp);
@@ -90,29 +86,8 @@ popsin(inputPars *par, struct grid **g, molData **m, int *popsdone){
   }
   fclose(fp);
 
-  fp2 = fopen("log_grid.txt","w");
-  for(i=0;i<par->ncell;i++){
-    fprintf(fp2,"id = %d \n",(*g)[i].id);
-    for(j=0;j<sizeof((*g)[i].x)/sizeof(double);j++){
-      fprintf(fp2,"x = %e \n",(*g)[i].x[j]);
-    }
-    if((*g)[i].sink==1){
-      fprintf(fp2,"sink point: YES\n");
-      sinkcount++;
-    }
-    else {
-      fprintf(fp2,"sink point: NO\n");
-      pcount++;
-    }
-    //fprintf(fp2,"The number of grid points is %d \n",par->ncell);
-  }
-  fprintf(fp2,"pIntensity equals %d\n",pcount);
-  fprintf(fp2,"sinkPoints equals %d\n",sinkcount);
   par->pIntensity = pcount;
   par->sinkPoints = sinkcount;
-  fprintf(fp2,"par->pIntensity equals %d\n",par->pIntensity);
-  fprintf(fp2,"par->sinkPoints equals %d\n",par->sinkPoints);
-  fclose(fp2);
 
 
   qhull(par, *g);

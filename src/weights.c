@@ -24,8 +24,8 @@ pointEvaluation(inputPars *par,double ran, double x, double y, double z){
   polr = sqrt(pow(x,2)+pow(y,2));
   sphr = sqrt(pow(x,2)+pow(y,2)+pow(z,2));
   
-  cut = (1./10.)*pow((polr/(AU)),2./7.);
-  powr = 8.0;//was 2.5 for RNo90 disk grid, 1.8 for flared
+  cut = (1./11.)*pow((polr/(AU)),1.5/7.);
+  powr = 6.0;//was 2.5 for RNo90 disk grid, 1.8 for flared
   
   varpowr = 1.0+1.5*(fabs(r-6.5*AU)/93.5*AU);
   
@@ -51,8 +51,8 @@ pointEvaluation(inputPars *par,double ran, double x, double y, double z){
   //}
 
   
-  //if(ran < weight1 || ran < weight2 || ran < weight3){
-  if(ran < weight1 || ran < weight3){
+  if(ran < weight1 || ran < weight2 || ran < weight3){
+  //if(ran < weight1 || ran < weight3){
   //fp = fopen("weights.txt","a");
   //fprintf(fp,"%e %e   %e   %e   %e\n",r,az,weight1,weight2,weight3);
   //fclose(fp);

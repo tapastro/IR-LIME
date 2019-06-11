@@ -22,7 +22,7 @@ LTE(inputPars *par, struct grid *g, molData *m){
       if(par->abundancesAreAbsolute){
         g[id].nmol[ispec] = g[id].abun[ispec];
       } else {
-        g[id].nmol[ispec] = g[id].abun[ispec] * g[id].dens[0];
+        g[id].nmol[ispec] = g[id].abun[ispec] * (g[id].dens[0]+g[id].dens[1]);
       }
       /* Calculate the partition function */
       z = 0;

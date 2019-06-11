@@ -29,8 +29,8 @@
 #define omp_set_dynamic(int) 0
 #endif
 
-#define silent 1
-#define nthreads 22
+#define silent 0
+#define nthreads 8
 #define DIM 3
 
 /* Physical constants */
@@ -48,7 +48,7 @@
 #define GRAV		6.67428e-11
 
 /* Other constants */
-#define NITERATIONS 	10
+#define NITERATIONS 	16
 #define max_phot		10000		/* don't set this value higher unless you have enough memory. */
 #define ininphot		9
 #define minpop			1.e-6
@@ -108,7 +108,7 @@ struct grid {
   int sink;
   int nphot;
   int conv;
-  double *dens,t[2],*nmol,*abun, dopb;//, *dd;
+  double *dens,t[2],*nmol,*abun, dopb;
   double *ds;
   struct populations { double * pops, *knu, *dust; double dopb, binv; struct rates *partner; } *mol;
 };
@@ -207,7 +207,6 @@ double 	veloproject(double *, double *);
 void	writefits(int, inputPars *, molData *, image *);
 void    write_VTK_unstructured_Points(inputPars *, struct grid *);
 
-void    dustdens(double gasdens, double gtd, double *dd);
 /* Curses functions */
 
 void 	greetings();

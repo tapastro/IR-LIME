@@ -15,7 +15,7 @@
 
 void
 kappa(molData *m, struct grid *g, inputPars *par, int s){
-  FILE *fp;//,*fpdd;
+  FILE *fp;
   char string[80];
   int i=0,k,j,iline,id,n;
   double loglam, *lamtab, *kaptab, *kappatab, gtd, densum;
@@ -66,34 +66,19 @@ kappa(molData *m, struct grid *g, inputPars *par, int s){
       free(lamtab);
     }
   }
-  /*fpdd=fopen("cell_dustdens.dat","a");
-  for(id=0;id<par->ncell;id++){
-    gasIIdust(g[id].x[0],g[id].x[1],g[id].x[2],&gtd);
-    densum = 0.;
-    for(n=0;n<par->collPart;n++) {
-      densum += g[id].dens[n];
-    }
-    dustdens(densum,gtd,g[id].dd);
-    //g[id].dd = densum/gtd;
-    fprintf(fpdd,"%e \n",g[id].dd[0]);
-  }
-  fclose(fpdd);
-  */
+  
   for(iline=0;iline<m[s].nline;iline++){
     for(id=0;id<par->ncell;id++){
       gasIIdust(g[id].x[0],g[id].x[1],g[id].x[2],&gtd);
       
       //Replaced line with sum of partners to better match dust density distribution
       //Used to assume first coll partner tracks dust density distribution with g2d
-      //Assumes only one moldatfile!
+      //This change assumes only one moldatfile!
       //g[id].mol[s].knu[iline]=kappatab[iline]*2.4*AMU/gtd*g[id].dens[0];  
       densum = 0.;
       for(n=0;n<par->collPart;n++) {
         densum += g[id].dens[n];
       }
-      //dustdens(densum,gtd,g[id].dd);
-      //g[id].dd = densum/gtd;
-      //printf("%f\n",g[id].dd[0]);
       g[id].mol[s].knu[iline]=kappatab[iline]*2.4*AMU/gtd*densum;
       
       //Check if input model supplies a dust temperature. Otherwise use the kinetic temperature
@@ -138,7 +123,7 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
   struct data { double *colld, *temp; } *part;
 
   char string[200], specref[90], partstr[90];
-  FILE *fp;
+  FILE *fp,*fp2;
 
   if((fp=fopen(par->moldatfile[i], "r"))==NULL) {
     if(!silent) bail_out("Error opening molecular data file");
@@ -264,6 +249,8 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
       collpartmesg3(par->collPart, flag);
     }
     /* Calculate molecular density */
+    fp2 = fopen("nmol.txt","a");
+    printf("PRINTING NMOL \n");
     for(id=0;id<par->ncell; id++){
       for(ispec=0;ispec<par->nSpecies;ispec++){
         if(par->abundancesAreAbsolute){
@@ -285,7 +272,9 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
           }
         }
       }
+      fprintf(fp2,"%d     %e \n",id,g[id].nmol[0]);
     }
+    fclose(fp2);
     for(id=0;id<par->ncell;id++){
       g[id].mol[i].partner=malloc(sizeof(struct rates)*m[i].npart);
       for(ipart=0;ipart<m[i].npart;ipart++){

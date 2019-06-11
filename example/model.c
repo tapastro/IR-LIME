@@ -151,14 +151,6 @@ velocity(double x, double y, double z, double *vel){
 
 /******************************************************************************/
 
-void
-dustdens(double gasdens, double gtd, double *dustdens){
-  //printf("%e \n", gasdens/gtd);
-  dustdens[0] = gasdens/gtd;
-}
-
-/******************************************************************************/
-
 void filenames(char *rname, char *tname, char *gname){
   strcpy(rname,"/Users/tpauly/IR-LIME/example/radius.dat");
   strcpy(tname,"/Users/tpauly/IR-LIME/example/theta.dat");

@@ -31,7 +31,6 @@ int main () {
   molData	  *m;
   inputPars	  par;
   struct grid *g;
-  FILE *fp;
   image		  *img;
   if(!silent) greetings();
   if(!silent) screenInfo();
@@ -40,22 +39,12 @@ int main () {
   gridread(&ingridarray,&gridlength,&thtvec,&radvec);
   parseInput(&par,&img,&m);
 
-  //Testing exclusion of gridAlloc if restart active
-  //if(!(par.restart)) gridAlloc(&par,&g);
-  gridAlloc(&par,&g);
+  if(!(par.restart)) gridAlloc(&par,&g);
 
   if(par.pregrid) predefinedGrid(&par,g);
   else if(par.restart) popsin(&par,&g,&m,&popsdone);
   else buildGrid(&par,g);
   
-  /*
-  fp = fopen("log_popsin.txt","a");
-  fprintf(fp,"Test print from main\n");
-  fprintf(fp,"num points equals %d",par.pIntensity);
-  fprintf(fp,"sink points equals %d",par.sinkPoints);
-  fclose(fp);
-  */
-
   for(i = 0;i < par.nImages; i++){
     if(img[i].doline == 1 && popsdone == 0) {
       levelPops(m,&par,g,&popsdone);
@@ -72,7 +61,7 @@ int main () {
 
 
 double bilinInterpVal(double x1, double y1, double z1, int col) {
-    double r1, t1, pz; 
+    double rpol,r1, t1, pz; 
     double wr1, wr2, wt1, wt2; 
     double d1, d2, val, tmp1, tmp2;
     int rind=-1,tind=-1,rmax=0,tmax=0;
@@ -83,8 +72,9 @@ double bilinInterpVal(double x1, double y1, double z1, int col) {
     //Assume +/- z symmetry    
     pz = fabs(z1);
     //Find r, theta for interpolation
-    r1 = sqrt(pow(x1,2)+pow(y1,2));
-    t1 = atan(r1/pz);
+    rpol = sqrt(pow(x1,2)+pow(y1,2));
+    t1 = atan(rpol/pz);
+    r1 = sqrt(pow(x1,2)+pow(y1,2)+pow(z1,2));
     if(t1>PI/2.) t1 = PI - t1;
  
     for (int i = RLEN;i>-1;i--){
@@ -182,9 +172,9 @@ void gridread(double*** array, int *glen, double** tvec, double** rvec) {
     tv = malloc(TLEN*sizeof(double));
     rv = malloc(RLEN*sizeof(double));
 
+    //Give 1D vector of radii in grid, same for theta, finally the grid itself
+    //Grid: x, y, z, dens, abn, Tg, Td, Vdisp, Vx, Vy, Vz, Hfrac, H2frac
     filenames(rname,tname,gname);
-    printf("TEST PRINT\n");
-    printf("%s",rname);
 
     //fpr=fopen("radiuscopy_sr21.dat","r");
     fpr=fopen(rname,"r");
@@ -200,7 +190,6 @@ void gridread(double*** array, int *glen, double** tvec, double** rvec) {
     }
     fclose(fpt);
 
-/*  MAKE THIS PART MORE SMOOTH - RIGHT NOW, ENTER GRID FILE HERE */
     fp=fopen(gname, "r");
     
     while(fgets(string,280,fp) != NULL){

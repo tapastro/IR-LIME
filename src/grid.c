@@ -44,8 +44,6 @@ gridAlloc(inputPars *par, struct grid **g){
 
   for(i=0;i<(par->pIntensity+par->sinkPoints); i++){
     (*g)[i].dens=malloc(sizeof(double)*par->collPart);
-    //Added by TAP to test dustdens
-    //(*g)[i].dd=malloc(sizeof(double)*par->collPart);
     (*g)[i].abun=malloc(sizeof(double)*par->nSpecies);
     (*g)[i].nmol=malloc(sizeof(double)*par->nSpecies);
     (*g)[i].t[0]=-1;
