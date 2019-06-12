@@ -17,7 +17,7 @@
 void
 popsin(inputPars *par, struct grid **g, molData **m, int *popsdone){
   FILE *fp;
-  int i,j,k;
+  int i,j,k,pcount=0,sinkcount=0;
   char c;
   double dummy;
 
@@ -86,12 +86,32 @@ popsin(inputPars *par, struct grid **g, molData **m, int *popsdone){
   }
   fclose(fp);
 
+  fp2 = fopen("log_grid.txt","w");
+  for(i=0;i<par->ncell;i++){
+    fprintf(fp2,"id = %d \n",(*g)[i].id);
+    for(j=0;j<sizeof((*g)[i].x)/sizeof(double);j++){
+      fprintf(fp2,"x = %e \n",(*g)[i].x[j]);
+    }
+    if((*g)[i].sink==1){
+      fprintf(fp2,"sink point: YES\n");
+      sinkcount++;
+    }
+    else {
+      fprintf(fp2,"sink point: NO\n");
+      pcount++;
+    }
+  }
+  fprintf(fp2,"pIntensity equals %d\n",pcount);
+  fprintf(fp2,"sinkPoints equals %d\n",sinkcount);
   par->pIntensity = pcount;
   par->sinkPoints = sinkcount;
+  fprintf(fp2,"par->pIntensity equals %d\n",par->pIntensity);
+  fprintf(fp2,"par->sinkPoints equals %d\n",par->sinkPoints);
 
 
   qhull(par, *g);
   distCalc(par, *g);
   getVelosplines(par,*g);
   *popsdone=1;
+  fclose(fp2);
 }
