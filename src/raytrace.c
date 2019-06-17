@@ -227,7 +227,6 @@ raytrace(int im, inputPars *par, struct grid *g, molData *m, image *img){
   const gsl_rng *ran = gsl_rng_alloc(gsl_rng_ranlxs2);	/* Random number generator */
   gsl_rng_set(ran,time(0));
   data *ray;
-  FILE *fp;
 
   int sg,n;
   double cx,cy;

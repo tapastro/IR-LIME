@@ -123,7 +123,7 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
   struct data { double *colld, *temp; } *part;
 
   char string[200], specref[90], partstr[90];
-  FILE *fp,*fp2;
+  FILE *fp;
 
   if((fp=fopen(par->moldatfile[i], "r"))==NULL) {
     if(!silent) bail_out("Error opening molecular data file");
@@ -249,8 +249,6 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
       collpartmesg3(par->collPart, flag);
     }
     /* Calculate molecular density */
-    fp2 = fopen("nmol.txt","a");
-    printf("PRINTING NMOL \n");
     for(id=0;id<par->ncell; id++){
       for(ispec=0;ispec<par->nSpecies;ispec++){
         if(par->abundancesAreAbsolute){
@@ -272,9 +270,7 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
           }
         }
       }
-      fprintf(fp2,"%d     %e \n",id,g[id].nmol[0]);
     }
-    fclose(fp2);
     for(id=0;id<par->ncell;id++){
       g[id].mol[i].partner=malloc(sizeof(struct rates)*m[i].npart);
       for(ipart=0;ipart<m[i].npart;ipart++){
