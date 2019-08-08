@@ -59,8 +59,9 @@ OBJS    = src/aux.o src/curses.o src/grid.o src/LTEsolution.o   \
 		  src/tcpsocket.o src/defaults.o src/write_defgrid.o
 MODELO 	= src/model.o
 
-## CCFLAGS = -O3 -g3 -fno-strict-aliasing -falign-loops=16   
-CCFLAGS = -Og -g3 -fno-strict-aliasing -falign-loops=16   
+## Debug flags below
+## CCFLAGS = -Og -g3 -fno-strict-aliasing -falign-loops=16   
+CCFLAGS = -O3 -fno-strict-aliasing -falign-loops=16   
 LDFLAGS = -lgsl -lgslcblas -l${QHULL} -lcfitsio -lncurses -lm 
 
 .SILENT:

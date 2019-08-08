@@ -125,7 +125,7 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
 
   char xsnstr[600];
   char string[200], specref[90], partstr[90];
-  FILE *fp,*fp2;
+  FILE *fp;
 
   if((fp=fopen(par->moldatfile[i], "r"))==NULL) {
     if(!silent) bail_out("Error opening molecular data file");
@@ -170,10 +170,6 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
     if(!silent) bail_out("Error resetting file pointer to start");
     exit(1);
   }
-
-  fp2=fopen("maxxsn_log.txt","a");
-  fprintf(fp2,"%d\n",maxxsn);
-  fclose(fp2);
 
   /* Read the header of the data file */
   fgets(string, 80, fp);
@@ -254,12 +250,6 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
       fgets(string, 80, fp);
       part[ipart].temp=malloc(sizeof(double)*ntemp[ipart]);
       if(ipart==0){
-        // SIZE OF COLL TABLE SET BY FIRST PARTNER NUMBER OF TRANSITIONS
-        // HOTFIX - ASSIGN SIZE TO KNOWN ATOMIC HYDROGEN LENGTH = 1722
-        //m[i].lcl = malloc(sizeof(int)*m[i].ntrans[ipart]);
-        //m[i].lcu = malloc(sizeof(int)*m[i].ntrans[ipart]);
-        //m[i].lcl = malloc(sizeof(int)*4080);
-        //m[i].lcu = malloc(sizeof(int)*4080);
         m[i].lcl = malloc(sizeof(int)*maxxsn);
         m[i].lcu = malloc(sizeof(int)*maxxsn);
       }
