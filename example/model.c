@@ -22,7 +22,7 @@ input(inputPars *par, image *img){
  */
   par->radius = 2000*AU;
   par->minScale	= 0.5*AU;
-  par->pIntensity = 18000;
+  par->pIntensity = 58000;
   par->sinkPoints = 4000;
   par->dust = "jena_thin_e6.tab";
   par->moldatfile[0] = "hco+@xpol.dat";
@@ -169,5 +169,20 @@ void maxdens(double * mdens){
 void minscale(double * minr){
   *minr=0.49*AU;
 }
+int pointEvaluation(inputPars *par,double ran, double x, double y, double z){
+  double weight1, weight2, val[99],n0;
 
+  density(par->minScale,par->minScale,par->minScale,val);
+  //abundance(par->minScale,par->minScale,par->minScale,val2);
+  n0=1e6; //val[0];
+  density(x,y,z,val);
+  //abundance(x,y,z,val2);
+  weight1=pow(val[0]/n0,0.2);
+
+
+  weight2=0.;
+
+  if(ran < weight1 || ran < weight2) return 1;
+  else return 0;
+}
 

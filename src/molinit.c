@@ -116,19 +116,64 @@ planckfunc(int iline, double temp, molData *m,int s){
 
 void
 molinit(molData *m, inputPars *par, struct grid *g,int i){
+  int npart, il, ip, maxxsn=0, collxsns[10];
   int id, ilev, iline, itrans, ispec, itemp, *ntemp, tnint=-1, idummy, ipart, *count,flag=0;
   char *collpartname[] = {"H2","p-H2","o-H2","electrons","H","He","H+"}; /* definition from LAMDA */
   //char *collpartname[] = {"p-H2","o-H2","H","H2","Hd"}; /* 5 COLL PARTNER ORDER TAP*/
   double fac, uprate, downrate=0, dummy, amass;
   struct data { double *colld, *temp; } *part;
 
+  char xsnstr[600];
   char string[200], specref[90], partstr[90];
-  FILE *fp;
+  FILE *fp,*fp2;
 
   if((fp=fopen(par->moldatfile[i], "r"))==NULL) {
     if(!silent) bail_out("Error opening molecular data file");
     exit(1);
   }
+
+  /* Read first five header lines */
+  for(il=0;il<5;il++){
+    fgets(string,80,fp);
+  }
+  /* Read in number of energy levels */
+  fscanf(fp,"%d\n",&idummy);
+  /* Read through two label lines and all energy levels */
+  for(il=0;il<(2+idummy);il++){
+    fgets(string,80,fp);
+  }
+  /* Read in number of transitions */
+  fscanf(fp,"%d\n",&idummy);
+  /* Read through two label lines and all transitions */
+  for(il=0;il<(2+idummy);il++){
+    fgets(string,80,fp);
+  }
+  /* Read in number of collision partners */
+  fscanf(fp,"%d\n",&npart);
+  /* Now loop through collision partners, finding number of collisions for each partner */
+  for(ip=0;ip<npart;ip++){
+    /* Three comment lines */
+    for(il=0;il<3;il++){
+      fgets(string,190,fp);
+    }
+    /* Read in n_trans for each coll here */
+    fscanf(fp,"%d\n",&collxsns[ip]);
+    /* If bigger than previous max (init=0), set max to current value */
+    if(collxsns[ip]>maxxsn) maxxsn = collxsns[ip];
+    /* Scan through five more comment lines and all transitions */ 
+    for(il=0;il<(5+collxsns[ip]);il++){
+      fgets(xsnstr,600,fp);
+    }
+  }
+
+  if(fseek(fp,0L,SEEK_SET) != 0){
+    if(!silent) bail_out("Error resetting file pointer to start");
+    exit(1);
+  }
+
+  fp2=fopen("maxxsn_log.txt","a");
+  fprintf(fp2,"%d\n",maxxsn);
+  fclose(fp2);
 
   /* Read the header of the data file */
   fgets(string, 80, fp);
@@ -213,8 +258,10 @@ molinit(molData *m, inputPars *par, struct grid *g,int i){
         // HOTFIX - ASSIGN SIZE TO KNOWN ATOMIC HYDROGEN LENGTH = 1722
         //m[i].lcl = malloc(sizeof(int)*m[i].ntrans[ipart]);
         //m[i].lcu = malloc(sizeof(int)*m[i].ntrans[ipart]);
-        m[i].lcl = malloc(sizeof(int)*4080);
-        m[i].lcu = malloc(sizeof(int)*4080);
+        //m[i].lcl = malloc(sizeof(int)*4080);
+        //m[i].lcu = malloc(sizeof(int)*4080);
+        m[i].lcl = malloc(sizeof(int)*maxxsn);
+        m[i].lcu = malloc(sizeof(int)*maxxsn);
       }
       for(itemp=0;itemp<ntemp[ipart];itemp++){
         fscanf(fp, "%lf", &part[ipart].temp[itemp]);
