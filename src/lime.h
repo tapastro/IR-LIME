@@ -66,6 +66,7 @@ typedef struct {
   int ncell,sinkPoints,pIntensity,nImages,nSpecies,blend;
   char *outputfile, *binoutputfile, *inputfile;
   char *gridfile;
+  char *defgridfile;
   char *pregrid;
   char *restart;
   char *dust;
@@ -206,6 +207,7 @@ void   	velocityspline2(double *, double *, double, double, double, double*);
 double 	veloproject(double *, double *);
 void	writefits(int, inputPars *, molData *, image *);
 void    write_VTK_unstructured_Points(inputPars *, struct grid *);
+void    write_defgrid(inputPars *, struct grid *);
 
 /* Curses functions */
 

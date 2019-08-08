@@ -234,6 +234,7 @@ write_VTK_unstructured_Points(inputPars *par, struct grid *g){
 void
 dumpGrid(inputPars *par, struct grid *g){
   if(par->gridfile) write_VTK_unstructured_Points(par, g);
+  if(par->defgridfile) write_defgrid(par,g);
 }
 
 void
@@ -497,6 +498,7 @@ buildGrid(inputPars *par, struct grid *g){
   qhull(par, g);
   distCalc(par, g);
   if(!silent) done(4);
+  
   smooth(par,g);
 
   for(i=0;i<par->pIntensity;i++){

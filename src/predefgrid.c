@@ -17,37 +17,33 @@ void
 predefinedGrid(inputPars *par, struct grid *g){
   FILE *fp;
   int i,j,k;
-  double x,y,z,scale,dummy;
+  double x,y,z,scale,dummy,hfrac,h2frac,densum;
   const gsl_rng *ran = gsl_rng_alloc(gsl_rng_ranlxs2);
   gsl_rng_set(ran,time(0));
 
   fp=fopen(par->pregrid,"r");
   par->ncell=par->pIntensity+par->sinkPoints;
 
-  //for(j=0;j<100000; j++) fscanf(fp,"%d %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", &k, &dummy, &dummy,&dummy,&dummy,&dummy,&dummy,&dummy,&dummy,&dummy);
+  /* Reading in x, y, z, density, molabun, gastemp, dusttemp, dopb, vx, vy, vz */
   for(i=0;i<par->pIntensity;i++){
-//    fscanf(fp,"%d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", &g[i].id, &g[i].x[0], &g[i].x[1], &g[i].x[2],  &g[i].dens[0], &g[i].t[0], &abun, &g[i].dopb, &g[i].vel[0], &g[i].vel[1], &g[i].vel[2]);
-//    fscanf(fp,"%d %lf %lf %lf %lf %lf %lf %lf\n", &g[i].id, &g[i].x[0], &g[i].x[1], &g[i].x[2],  &g[i].dens[0], &g[i].t[0], &abun, &g[i].dopb);
-    fscanf(fp,"%d %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", &g[i].id, &g[i].x[0], &g[i].x[1], &g[i].x[2],  &g[i].dens[0], &g[i].t[0], &g[i].abun[0], &g[i].vel[0], &g[i].vel[1], &g[i].vel[2]);
-
-
-
-    g[i].dopb=200;
-    g[i].abun[0]=1e-9;
-
-    g[i].x[0]=(g[i].x[0]+ (g[i].x[0]*0.1)*(2*gsl_rng_uniform(ran)-1.))/100.;
-    g[i].x[1]=(g[i].x[1]+ (g[i].x[1]*0.1)*(2*gsl_rng_uniform(ran)-1.))/100.;
-    g[i].x[2]=(g[i].x[2]+ (g[i].x[2]*0.1)*(2*gsl_rng_uniform(ran)-1.))/100.;
-
+    fscanf(fp,"%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", &g[i].x[0], &g[i].x[1], &g[i].x[2], &densum, &g[i].abun[0], &g[i].t[0], &g[i].t[1], &g[i].dopb, &g[i].vel[0], &g[i].vel[1], &g[i].vel[2]);
 
     g[i].sink=0;
-    g[i].t[0]=50;
-    g[i].dens[0]=1e12;
-    g[i].t[1]=g[i].t[0];
-	  g[i].nmol[0]=g[i].abun[0]*g[i].dens[0];
-	  velocity(g[i].x[0],g[i].x[1],g[i].x[2],g[i].vel);
+    g[i].id = i;
+    //g[i].abun[0] = 1.e-8;
+     
+    /* Must specify how the total density is distributed amongst collision partners.
+       Here, we have 3:1 ortho/para for H2
+     */
+    g[i].dens[0] = densum*0.25;
+    g[i].dens[1] = densum*0.75;
 
-	/* This next step needs to be done, even though it looks stupid */
+    //Next line redundant with molinit?
+	g[i].nmol[0]=g[i].abun[0]*(g[i].dens[0]+g[i].dens[1]);
+	
+
+	/* Below comment and code from Brinch */
+    /* This next step needs to be done, even though it looks stupid */
 	g[i].dir=malloc(sizeof(point)*1);
 	g[i].ds =malloc(sizeof(double)*1);
 	g[i].neigh =malloc(sizeof(struct grid *)*1);

@@ -24,7 +24,7 @@ pointEvaluation(inputPars *par,double ran, double x, double y, double z){
   polr = sqrt(pow(x,2)+pow(y,2));
   sphr = sqrt(pow(x,2)+pow(y,2)+pow(z,2));
   
-  cut = (1./11.)*pow((polr/(AU)),1.5/7.);
+  cut = (1./15.)*pow((polr/(AU)),1.5/7.);
   powr = 6.0;//was 2.5 for RNo90 disk grid, 1.8 for flared
   
   varpowr = 1.0+1.5*(fabs(r-6.5*AU)/93.5*AU);
