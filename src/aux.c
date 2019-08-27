@@ -29,6 +29,7 @@ parseInput(inputPars *par, image **img, molData **m){
   par->binoutputfile= NULL;
   par->gridfile = NULL;
   par->pregrid = NULL;
+  par->defgridfile = NULL;
   par->restart = NULL;
 
   par->tcmb = 2.728;
