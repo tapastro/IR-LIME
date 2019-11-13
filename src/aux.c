@@ -15,13 +15,7 @@
 #include <gsl/gsl_sort.h>
 #include <gsl/gsl_statistics.h>
 
-
-void
-parseInput(inputPars *par, image **img, molData **m){
-  FILE *fp;
-  int i,id;
-  double BB[3];
-
+void defaultInputPars(inputPars *par){
 /* Set default values */
   par->dust = NULL;
   par->inputfile = NULL;
@@ -43,6 +37,16 @@ parseInput(inputPars *par, image **img, molData **m){
   par->threads = 0;
   par->discreteVelocities = 0;
   par->abundancesAreAbsolute = 0;
+  par->inputmodel = 0;
+
+}
+
+void
+parseInput(inputPars *par, image **img, molData **m){
+  FILE *fp;
+  int i,id;
+  double BB[3];
+
 
   /* Allocate space for output fits images */
   (*img) = malloc(sizeof(image)*100);
@@ -273,6 +277,7 @@ levelPops(molData *m, inputPars *par, struct grid *g, int *popsdone){
   /* Check for blended lines */
   //lineBlend(m,par,&matrix);
   if(par->lte_only) LTE(par,g,m);
+
   for(id=0;id<par->pIntensity;id++){
     stat[id].pop=malloc(sizeof(double)*m[0].nlev*5);
     stat[id].ave=malloc(sizeof(double)*m[0].nlev);

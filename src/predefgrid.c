@@ -35,6 +35,7 @@ predefinedGrid(inputPars *par, struct grid *g){
     /* Must specify how the total density is distributed amongst collision partners.
        Here, we have 3:1 ortho/para for H2
      */
+    par->collPart = 2;
     g[i].dens[0] = densum*0.25;
     g[i].dens[1] = densum*0.75;
 
@@ -76,5 +77,5 @@ predefinedGrid(inputPars *par, struct grid *g){
 //  getMass(par,g, ran);
 //  getVelosplines_lin(par,g);
   getVelosplines(par,g);
-  if(par->gridfile) write_VTK_unstructured_Points(par, g);
+  dumpGrid(par, g);
 }

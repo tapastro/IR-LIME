@@ -39,8 +39,7 @@ write_defgrid(inputPars *par, struct grid *g){
     /*hfrac = g[i].dens[2]/densum;
     h2frac = 1.00E+0-hfrac;
     */
-    //fprintf(fp,"%.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e %.7e\n", g[i].x[0], g[i].x[1], g[i].x[2], densum, g[i].abun[0], g[i].t[0], g[i].t[1], g[i].dopb, g[i].vel[0], g[i].vel[1], g[i].vel[2], hfrac, h2frac);
-    //fprintf(fp,"%e %e %e %e %e %e %e %e %e %e %e %e %e\n", g[i].x[0], g[i].x[1], g[i].x[2], densum, g[i].abun[0], g[i].t[0], g[i].t[1], g[i].dopb, g[i].vel[0], g[i].vel[1], g[i].vel[2], hfrac, h2frac);
+    //fprintf(fp,"%e %e %e %e %e %e %e %e %e %e %e %e %e\n", g[i].x[0], g[i].x[1], g[i].x[2], g[i].dens[0], g[i].dens[1], densum, g[i].abun[0], g[i].t[0], g[i].t[1], g[i].dopb, g[i].vel[0], g[i].vel[1], g[i].vel[2]);
     fprintf(fp,"%e %e %e %e %e %e %e %e %e %e %e\n", g[i].x[0], g[i].x[1], g[i].x[2], densum, g[i].abun[0], g[i].t[0], g[i].t[1], g[i].dopb, g[i].vel[0], g[i].vel[1], g[i].vel[2]);
   }
   fprintf(fp, "\n");

@@ -12,11 +12,11 @@ endif
 ifneq (,$(wildcard /opt/local/lib/.))
     LIBS += -L/opt/local/lib
 endif
-ifneq (,$(wildcard /sw/lib/.))
-    LIBS += -L/sw/lib
-endif
-ifneq (,$(wildcard /usr/local/lib/.))
-    LIBS += -L/usr/local/lib
+#ifneq (,$(wildcard /sw/lib/.))
+#    LIBS += -L/sw/lib
+#endif
+ifneq (,$(wildcard /usr/lib/.))
+    LIBS += -L/usr/lib
 endif
 
 
@@ -24,7 +24,7 @@ CPPFLAGS	= -I${PREFIX}/include \
 		  -I${PREFIX}/src \
 		  -I${HOME}/include \
 		  -I/opt/local/include \
-		  -I/sw//include
+		  -I/usr/include 
 
 # For qhull version 2011.1 or newer:
 QHULL   = qhullstatic
@@ -39,7 +39,9 @@ QHULL   = qhullstatic
 ##
 
 TARGET  = lime.x 
-CC	= gcc-6 -fopenmp 
+#CC	= gcc-6 -fopenmp 
+CC	= gcc  #-fopenmp 
+#CC	= mpicc  
 SRCS    = src/aux.c src/curses.c src/grid.c src/LTEsolution.c   \
 		  src/main.c src/molinit.c src/photon.c src/popsin.c    \
 		  src/popsout.c src/predefgrid.c src/ratranInput.c      \
@@ -47,7 +49,8 @@ SRCS    = src/aux.c src/curses.c src/grid.c src/LTEsolution.c   \
 		  src/stateq.c src/statistics.c src/magfieldfit.c       \
 		  src/stokesangles.c src/writefits.c      \
 		  src/velospline.c src/old_raytrace.c src/getclosest.c  \
-		  src/tcpsocket.c src/defaults.c src/write_defgrid.c
+		  src/tcpsocket.c src/defaults.c src/write_defgrid.c   \
+          src/inputmodel.c
 MODELS  = model.c
 OBJS    = src/aux.o src/curses.o src/grid.o src/LTEsolution.o   \
 		  src/main.o src/molinit.o src/photon.o src/popsin.o    \
@@ -56,13 +59,13 @@ OBJS    = src/aux.o src/curses.o src/grid.o src/LTEsolution.o   \
 		  src/stateq.o src/statistics.o src/magfieldfit.o       \
 		  src/stokesangles.o src/writefits.o       \
 		  src/velospline.o src/old_raytrace.o src/getclosest.o  \
-		  src/tcpsocket.o src/defaults.o src/write_defgrid.o
+		  src/tcpsocket.o src/defaults.o src/write_defgrid.o    \
+          src/inputmodel.o
 MODELO 	= src/model.o
 
-## Debug flags below
-## CCFLAGS = -Og -g3 -fno-strict-aliasing -falign-loops=16   
-CCFLAGS = -O3 -fno-strict-aliasing -falign-loops=16   
-LDFLAGS = -lgsl -lgslcblas -l${QHULL} -lcfitsio -lncurses -lm 
+#CCFLAGS = -O3 -g3 -fno-strict-aliasing -falign-loops=16   
+CCFLAGS = -Og -g3 -fno-strict-aliasing -w -fopenmp #-falign-loops=16   
+LDFLAGS = -lgsl -lgslcblas -l${QHULL} -lcfitsio -lncurses -lm -lgomp 
 
 .SILENT:
 

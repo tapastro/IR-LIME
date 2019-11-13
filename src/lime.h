@@ -21,6 +21,10 @@
 #include <gsl/gsl_spline.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_linalg.h>
+
+#include <omp.h>
+
+/*
 #ifdef _OPENMP
 #include <omp.h>
 #else
@@ -28,9 +32,9 @@
 #define omp_get_thread_num() 0
 #define omp_set_dynamic(int) 0
 #endif
-
+*/
 #define silent 0
-#define nthreads 8
+#define nthreads  8
 #define DIM 3
 
 /* Physical constants */
@@ -48,7 +52,7 @@
 #define GRAV		6.67428e-11
 
 /* Other constants */
-#define NITERATIONS 	16
+#define NITERATIONS     10
 #define max_phot		10000		/* don't set this value higher unless you have enough memory. */
 #define ininphot		9
 #define minpop			1.e-6
@@ -71,6 +75,7 @@ typedef struct {
   char *restart;
   char *dust;
   int sampling,collPart,lte_only,antialias,polarization,threads,discreteVelocities,abundancesAreAbsolute;
+  int inputmodel;
   char **moldatfile;
 } inputPars;
 
@@ -208,7 +213,7 @@ double 	veloproject(double *, double *);
 void	writefits(int, inputPars *, molData *, image *);
 void    write_VTK_unstructured_Points(inputPars *, struct grid *);
 void    write_defgrid(inputPars *, struct grid *);
-
+void    defaultInputPars(inputPars *);
 /* Curses functions */
 
 void 	greetings();
